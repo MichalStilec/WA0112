@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Number guessing game</title>
+</head>
+
+<body>
+    <h1>Number guessing game</h1>
+    <hr>
+    <p>hráč snaží odhadnout náhodně zvolené číslo r, kde r  je větší než 0 a menší než 1001;</p>
+    <p>hráč píše svůj odhad do speciálního pole;</p>
+    <p>hráč má pouze jeden pokus a vybere-li číslo špatně - hra se skončí;</p>
+    <p>hráč má k dispozici jiné pole kam může zadávat čísla mezi 1 a 99;</p>
+    <p>po té co hráč napíše číslo do druhého pole se mu vypíše výsledek r mod a  a uloží se do seznamu jíž získaných výsledků;</p>
+    <p>hráč musí vždy mít k dispozici veškeré získané výsledky popsané v předchozím odstavci;</p>
+    <p>hráč má vždy možnost začít hru znova;</p>
+    <hr>
+    <br>
+    <div class="form" onKeyPress="return checkSubmitt(event)">
+        <label  for="guessFieldd">Enter your guess: </label>
+        <input type="number" min="1" max="99" required id="guessFieldd" class="guessFieldd">
+        <input type="submit" value="Submit guess" class="guessSubmitt">
+    </div>
+    <br>
+    <div class="form" onKeyPress="return checkSubmit(event)">
+        <label for="guessField">Enter final guess: </label>
+        <input type="number" min="0" max="1001" required id="guessField" class="guessField">
+        <input type="submit" value="Submit guess" class="guessSubmit">
+    </div>
+
+    <div class="resultParas">
+        <p class="guesses"></p>
+        <p class="lastResult"></p>
+    </div>
+
+    <script>
+        let randomNumber = Math.floor(Math.random() * 1002);
+        console.log(randomNumber);
+        const guesses = document.querySelector('.guesses');
+        const lastResult = document.querySelector('.lastResult');
+        const guessSubmit = document.querySelector('.guessSubmit');
+        const guessSubmitt = document.querySelector('.guessSubmitt');
+        const guessField = document.querySelector('.guessField');
+        let guessCount = 1;
+        let resetButton;
+
+        function checkGuess() {
+            const userGuess = Number(guessField.value);
+
+            if (userGuess === randomNumber) {
+                lastResult.textContent = 'Congratulations! You got it right!';
+                lastResult.style.backgroundColor = 'green';
+                setGameOver();
+            } else {
+                lastResult.textContent = 'Wrong!';
+                lastResult.style.backgroundColor = 'red';
+                setGameOver();
+            }
+
+        }
+
+        function checkGuess2() {
+            const userGuess = Number(guessFieldd.value);
+
+            if(userGuess < 0 || userGuess > 99) {
+                alert("Cislo je mimo rozsah");
+                return
+            }
+
+            let answer = randomNumber % userGuess;
+            guesses.textContent += answer + ' ';
+
+            guessCount++;
+            guessFieldd.value = '';
+            guessFieldd.focus();
+        }
+
+        guessSubmit.addEventListener('click', checkGuess);
+
+        guessSubmitt.addEventListener('click', checkGuess2);
+
+        resetButton = document.createElement('button');
+        resetButton.textContent = 'Start new game';
+        document.body.appendChild(resetButton);
+        resetButton.addEventListener('click', resetGame);
+        
+        function setGameOver() {
+            guessField.disabled = true;
+            guessSubmit.disabled = true;
+        }
+
+        function resetGame() {
+            guessCount = 1;
+            const resetParas = document.querySelectorAll('.resultParas p');
+            for (const resetPara of resetParas) {
+                resetPara.textContent = '';
+            }
+
+            guessField.disabled = false;
+            guessSubmit.disabled = false;
+            guessField.value = '';
+            lastResult.style.backgroundColor = 'white';
+            randomNumber = Math.floor(Math.random() * 1002);
+            console.log(randomNumber);
+        }
+
+        function checkSubmit(e) {
+            if(e && e.keyCode == 13) {
+                checkGuess();
+            }
+        }
+
+        function checkSubmitt(e) {
+            if(e && e.keyCode == 13) {
+                checkGuess2();
+            }
+        }
+    </script>
+</body>
+
+</html>
